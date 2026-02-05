@@ -27,9 +27,9 @@ int main()
 {
     stdio_init_all();
 
-    TIMER0->INTR = (1 << TIMER0_ALARM0); // Clear alarm 0 interrupt
-    TIMER0->INTE |= (1 << TIMER0_ALARM0); // Enable alarm 0 interrupt
-
+    TIMER_Handle_t TimerBlink;
+    TimerBlink.pTimerx = TIMER0;
+    TimerBlink.TIMER_Config.TIMER_Alarm = TIMER0_ALARM0;
     
 
     while (true) {

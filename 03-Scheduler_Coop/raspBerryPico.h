@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #define APBPERIPH_BASE      0X40000000
 #define SIO_BASEADDR        0xD0000000
 #define PPB_BASEADDR        0xE0000000

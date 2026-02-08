@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(03-Scheduler_Coop 03-Scheduler_Coop.c )
+add_executable(03-Scheduler_Coop 03-Scheduler_Coop.c hal_timer.c )
 
 pico_set_program_name(03-Scheduler_Coop "03-Scheduler_Coop")
 pico_set_program_version(03-Scheduler_Coop "0.1")

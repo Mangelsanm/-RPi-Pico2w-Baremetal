@@ -3,16 +3,28 @@
 #include "raspBerryPico.h"
 
 volatile uint32_t system_tick_ms = 0;
-uint32_t last_blink_time = 0;
+
+typedef struct {
+    void (*fn)(void);
+    uint32_t period_ms;
+    uint32_t next_run_time;
+} task_t;
+
+static task_t blink_task;
 
 void __attribute__((used)) isr_irq0(void)
 {
-    if (TIMER0->INTR & (1 << 0))
+    if (TIMER0->INTR & (1u << 0))
     {
-        TIMER0->INTR = (1 << 0);
-        TIMER0->ALARM0 = TIMER0->TIMELR + 1000;
+        TIMER0->INTR = (1u << 0);
+        TIMER0->ALARM0 = TIMER0->TIMELR + 1000u;
         system_tick_ms++;
     }
+}
+
+void task_blink()
+{ 
+    SIO->GPIO_OUT ^= (1 << 1); // Toggle GPIO1
 }
 
 int main()
@@ -37,11 +49,15 @@ int main()
     nvic_icpr[0] = (1 << 0); // Clear TIMER0 IRQ pending bit
     nvic_iser[0] |= (1 << 0); // Enable TIMER0 IRQ in NVIC
 
+    blink_task.fn = task_blink;
+    blink_task.period_ms = 500;
+    blink_task.next_run_time = system_tick_ms + blink_task.period_ms;
+
     while (true) {
         uint32_t now = system_tick_ms;
-        if (now - last_blink_time >= 1000) {
-            SIO->GPIO_OUT ^= (1 << 1); // Toggle GPIO1
-            last_blink_time += 1000; // Schedule next toggle in 1 second
+        if ((int32_t)(now - blink_task.next_run_time) >= 0) {
+            blink_task.fn();
+            blink_task.next_run_time += blink_task.period_ms; // Schedule next run
         }
     }
 }

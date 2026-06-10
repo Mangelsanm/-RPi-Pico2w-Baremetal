@@ -17,9 +17,7 @@ int main()
 
     scheduler_add_task(task_blink, 500);
     scheduler_add_task(task_blink2, 1000);
-
-    uart_write_string("Hello UART\r\n");
-
+    scheduler_add_task(task_uart_log, 5000);
 
     while (true) {
         scheduler_run();

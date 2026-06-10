@@ -1,5 +1,6 @@
 #include "app_tasks.h"
 #include "raspBerryPico.h"
+#include "uart.h"
 
 void app_tasks_init(void)
 {
@@ -28,4 +29,9 @@ void task_blink()
 void task_blink2()
 { 
     SIO->GPIO_OUT ^= (1 << 2); // Toggle GPIO2
+}
+
+void task_uart_log()
+{
+    uart_write_string("Task UART Log: Hello from the scheduler!\r\n");
 }

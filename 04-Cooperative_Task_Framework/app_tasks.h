@@ -3,3 +3,4 @@ void app_tasks_init(void);
 void task_blink(void);
 void task_blink2(void);
 void task_uart_log(void);
+void task_scheduler_log(void);

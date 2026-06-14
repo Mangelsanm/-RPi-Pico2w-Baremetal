@@ -1,6 +1,8 @@
 #include "app_tasks.h"
 #include "raspBerryPico.h"
 #include "uart.h"
+#include "timebase.h"
+#include <stdio.h>
 
 void app_tasks_init(void)
 {
@@ -34,4 +36,11 @@ void task_blink2()
 void task_uart_log()
 {
     uart_write_string("Task UART Log: Hello from the scheduler!\r\n");
+}
+
+void task_scheduler_log(void)
+{
+    char buffer[256];
+    snprintf(buffer, sizeof(buffer), "tick=%lu\r\n", (unsigned long)timebase_get_ms());
+    uart_write_string(buffer);
 }

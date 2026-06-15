@@ -1,10 +1,8 @@
 #include "scheduler.h"
 #include "timebase.h"
 
-#define SCHEDULER_MAX_TASKS 5u
-
-static task_t tasks[SCHEDULER_MAX_TASKS];
 static uint8_t task_count = 0;
+task_t tasks[SCHEDULER_MAX_TASKS];
 
 void scheduler_init(void)
 {
@@ -15,7 +13,7 @@ void scheduler_init(void)
         tasks[i].fn = NULL;
         tasks[i].period_ms = 0u;
         tasks[i].next_run_time = 0u;
-        // tasks[i].exec_count = 0u;
+        tasks[i].exec_count = 0u;
         tasks[i].enabled = 0u;
         // tasks[i].last_execution_us = 0u;
         // tasks[i].max_execution_us = 0u;
@@ -69,7 +67,7 @@ void scheduler_run(void)
             // {
             //     tasks[i].max_execution_us = execution_time_us;
             // }
-            
+            tasks[i].exec_count++;
             tasks[i].next_run_time += tasks[i].period_ms;
         }
     }

@@ -2,6 +2,7 @@
 #include "raspBerryPico.h"
 #include "uart.h"
 #include "timebase.h"
+#include "scheduler.h"
 #include <stdio.h>
 
 void app_tasks_init(void)
@@ -41,6 +42,10 @@ void task_uart_log()
 void task_scheduler_log(void)
 {
     char buffer[256];
-    snprintf(buffer, sizeof(buffer), "tick=%lu\r\n", (unsigned long)timebase_get_ms());
+    snprintf(buffer, sizeof(buffer),
+    "tick=%lu blink1=%lu blink2=%lu\r\n",
+    (unsigned long)timebase_get_ms(), 
+    (unsigned long)tasks[0].exec_count,
+    (unsigned long)tasks[1].exec_count);
     uart_write_string(buffer);
 }

@@ -9,6 +9,7 @@ typedef struct {
     uint32_t period_ms;
     uint32_t next_run_time;
     uint32_t exec_count;
+    uint32_t max_lateness;
     uint8_t enabled;
     // uint32_t last_execution_us;
     // uint32_t max_execution_us;

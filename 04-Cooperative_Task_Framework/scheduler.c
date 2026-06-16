@@ -14,6 +14,7 @@ void scheduler_init(void)
         tasks[i].period_ms = 0u;
         tasks[i].next_run_time = 0u;
         tasks[i].exec_count = 0u;
+        tasks[i].max_lateness = 0u;
         tasks[i].enabled = 0u;
         // tasks[i].last_execution_us = 0u;
         // tasks[i].max_execution_us = 0u;
@@ -57,6 +58,7 @@ void scheduler_run(void)
     {
         if ((tasks[i].enabled == 1) && time_reached_owner(now, tasks[i].next_run_time))
         {
+            tasks[i].max_lateness = now - tasks[i].next_run_time;
             // start_time_us = timebase_get_us();
             tasks[i].fn();
             // end_time_us = timebase_get_us();

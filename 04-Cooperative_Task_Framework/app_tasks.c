@@ -43,9 +43,11 @@ void task_scheduler_log(void)
 {
     char buffer[256];
     snprintf(buffer, sizeof(buffer),
-    "tick=%lu blink1=%lu blink2=%lu\r\n",
+    "tick=%lu blink1=%lu blink2=%lu\n late1=%lu late2=%lu\r\n",
     (unsigned long)timebase_get_ms(), 
     (unsigned long)tasks[0].exec_count,
-    (unsigned long)tasks[1].exec_count);
+    (unsigned long)tasks[1].exec_count,
+    (unsigned long)tasks[0].max_lateness,
+    (unsigned long)tasks[1].max_lateness);
     uart_write_string(buffer);
 }

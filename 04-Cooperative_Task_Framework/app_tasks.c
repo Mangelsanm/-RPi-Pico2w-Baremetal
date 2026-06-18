@@ -5,6 +5,12 @@
 #include "scheduler.h"
 #include <stdio.h>
 
+static uint8_t button_raw_state;
+static uint8_t button_last_raw_state;
+static uint8_t button_stable_state;
+static uint8_t button_counter;
+static uint8_t button_pressed_event;
+
 void app_tasks_init(void)
 {
     /*GPIO1 Configuration*/
@@ -22,6 +28,14 @@ void app_tasks_init(void)
     SIO->GPIO_OE &= ~(1 << 2);
     SIO->GPIO_OE |= (1 << 2);
     SIO->GPIO_OUT_CLR = (1 << 2);
+
+    /* GPIO15 as button input */
+    GPIO15->CTRL &= ~(0x1F);
+    GPIO15->CTRL |= (0x05); /* SIO */
+    /* IE = 1 */
+    PADS->IO[15] = (0x1 << 6);
+
+    SIO->GPIO_OE &= ~(1 << 15); /* Input */
 }
 
 void task_blink()
@@ -50,4 +64,37 @@ void task_scheduler_log(void)
     (unsigned long)tasks[0].max_lateness,
     (unsigned long)tasks[1].max_lateness);
     uart_write_string(buffer);
+}
+
+void task_button_monitor(void)
+{
+    button_raw_state = (uint8_t)((SIO->GPIO_IN >> 15) & 0x01u);
+    button_pressed_event = 0u;
+
+    if(button_raw_state == button_last_raw_state)
+    {
+        if(button_counter < debounce_threshold)
+        {
+            button_counter++;
+        }
+    }
+    else
+    {
+        button_counter = 0u;
+    }
+
+    if(button_counter >= debounce_threshold)
+    {
+        if(button_stable_state != button_raw_state)
+        {
+            button_stable_state = button_raw_state;
+
+            if(button_stable_state == 0u)
+            {
+                button_pressed_event = 1u;
+            }
+        }
+    }
+
+    button_last_raw_state = button_raw_state;
 }

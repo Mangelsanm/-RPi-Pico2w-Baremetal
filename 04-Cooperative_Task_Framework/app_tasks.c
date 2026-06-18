@@ -32,8 +32,8 @@ void app_tasks_init(void)
     /* GPIO15 as button input */
     GPIO15->CTRL &= ~(0x1F);
     GPIO15->CTRL |= (0x05); /* SIO */
-    /* IE = 1 */
-    PADS->IO[15] = (0x1 << 6);
+
+    PADS->IO[15] = (0x1 << 6) | (0x1 << 3); /* IE = 1, Pull-up enabled */
 
     SIO->GPIO_OE &= ~(1 << 15); /* Input */
 }
@@ -88,12 +88,16 @@ void task_button_monitor(void)
         if(button_stable_state != button_raw_state)
         {
             button_stable_state = button_raw_state;
-
             if(button_stable_state == 0u)
             {
                 button_pressed_event = 1u;
             }
         }
+    }
+
+    if(button_pressed_event == 1u)
+    {
+        uart_write_string("button pressed\r\n");
     }
 
     button_last_raw_state = button_raw_state;

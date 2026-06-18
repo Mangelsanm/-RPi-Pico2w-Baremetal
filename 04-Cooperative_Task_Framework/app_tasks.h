@@ -1,5 +1,5 @@
 
-#define debounce_threshold 5
+#define debounce_threshold 3
 
 void app_tasks_init(void);
 void task_blink(void);

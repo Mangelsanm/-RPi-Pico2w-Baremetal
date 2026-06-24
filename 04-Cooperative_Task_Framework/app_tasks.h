@@ -7,3 +7,4 @@ void task_blink2(void);
 void task_uart_log(void);
 void task_scheduler_log(void);
 void task_button_monitor(void);
+void task_app_control(void);

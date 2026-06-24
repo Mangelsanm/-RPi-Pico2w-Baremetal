@@ -19,6 +19,7 @@ int main()
     scheduler_add_task(task_blink2, 1000);
     scheduler_add_task(task_scheduler_log, 1000);
     scheduler_add_task(task_button_monitor, 10);
+    scheduler_add_task(task_app_control, 10);
 
     while (true) {
         scheduler_run();

@@ -4,12 +4,16 @@
 #include "timebase.h"
 #include "scheduler.h"
 #include <stdio.h>
+#include "app_state.h"
 
 static uint8_t button_raw_state;
 static uint8_t button_last_raw_state;
 static uint8_t button_stable_state;
 static uint8_t button_counter;
 static uint8_t button_pressed_event;
+
+/* variables for the State Machine */
+static app_state_t app_state_g = APP_STATE_IDLE;
 
 void app_tasks_init(void)
 {
@@ -35,7 +39,7 @@ void app_tasks_init(void)
 
     PADS->IO[15] = (0x1 << 6) | (0x1 << 3); /* IE = 1, Pull-up enabled */
 
-    SIO->GPIO_OE &= ~(1 << 15); /* Input */
+    SIO->GPIO_OE &= ~(1 << 15); /* Config as Input */
 }
 
 void task_blink()
@@ -95,10 +99,22 @@ void task_button_monitor(void)
         }
     }
 
-    if(button_pressed_event == 1u)
-    {
-        uart_write_string("button pressed\r\n");
-    }
+    // if(button_pressed_event == 1u)
+    // {
+    //     uart_write_string("button pressed\r\n");
+    // }
 
     button_last_raw_state = button_raw_state;
+}
+
+/**************************
+ * Description: Task to handle application control based on button press events.
+***************************/
+void task_app_control(void)
+{
+    if(button_pressed_event == 1u)
+    {
+        button_pressed_event = 0u; // Reset the event flag
+        app_next_state(app_state_g); // Transition to the next state
+    }
 }

@@ -118,3 +118,27 @@ void task_app_control(void)
         app_next_state(app_state_g); // Transition to the next state
     }
 }
+
+void task_state_log(void)
+{
+    if(state_changed_g == 1)
+    {
+        state_changed_g = 0u; // Reset the state changed flag
+
+        switch(app_state_g)
+        {
+            case APP_STATE_IDLE:
+                uart_write_string("State: IDLE\r\n");
+                break;
+            case APP_STATE_RUNNING:
+                uart_write_string("State: RUNNING\r\n");
+                break;
+            case APP_STATE_DIAGNOSTIC:
+                uart_write_string("State: DIAGNOSTIC\r\n");
+                break;
+            default:
+                uart_write_string("State: UNKNOWN\r\n");
+                break;
+        }
+    }
+}

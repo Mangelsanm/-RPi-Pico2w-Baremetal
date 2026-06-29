@@ -115,7 +115,7 @@ void task_app_control(void)
     if(button_pressed_event == 1u)
     {
         button_pressed_event = 0u; // Reset the event flag
-        app_next_state(app_state_g); // Transition to the next state
+        app_next_state(&app_state_g); // Transition to the next state
     }
 }
 

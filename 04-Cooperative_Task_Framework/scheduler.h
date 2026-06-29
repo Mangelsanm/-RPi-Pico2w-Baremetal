@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#define SCHEDULER_MAX_TASKS 5u
+#define SCHEDULER_MAX_TASKS 10u
 
 typedef void (*task_fn_t)(void);
 

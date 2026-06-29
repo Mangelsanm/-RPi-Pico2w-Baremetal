@@ -10,4 +10,5 @@ typedef enum
     APP_STATE_COUNT
 } app_state_t;
 
-void app_next_state(app_state_t app_state_g);
+void app_next_state(app_state_t *app_state_g);
+ 

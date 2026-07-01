@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(04-Cooperative_Task_Framework 04-Cooperative_Task_Framework.c hal_timer.c timebase.c scheduler.c app_tasks.c uart.c app_state.c )
+add_executable(04-Cooperative_Task_Framework 04-Cooperative_Task_Framework.c hal_timer.c timebase.c scheduler.c app_tasks.c uart.c app_state.c soft_timer.c )
 
 pico_set_program_name(04-Cooperative_Task_Framework "04-Cooperative_Task_Framework")
 pico_set_program_version(04-Cooperative_Task_Framework "0.1")

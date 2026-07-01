@@ -9,3 +9,4 @@ typedef struct
 
 void soft_timer_start(soft_timer_t *timer, uint32_t timeout_ms);
 void soft_timer_stop(soft_timer_t *timer);
+void soft_timer_is_expired(soft_timer_t *timer);

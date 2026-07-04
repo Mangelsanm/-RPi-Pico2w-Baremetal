@@ -1,3 +1,6 @@
+#ifndef SOFT_TIMER_H
+#define SOFT_TIMER_H
+
 #include <stdint.h>
 
 typedef struct
@@ -5,8 +8,10 @@ typedef struct
     uint32_t start_time_ms;
     uint32_t timeout_ms;
     uint8_t running;
-} soft_timer_t;
+} stw_timer_t;
 
-void soft_timer_start(soft_timer_t *timer, uint32_t timeout_ms);
-void soft_timer_stop(soft_timer_t *timer);
-void soft_timer_is_expired(soft_timer_t *timer);
+void sw_timer_start(stw_timer_t *timer, uint32_t timeout_ms);
+void sw_timer_stop(stw_timer_t *timer);
+uint8_t sw_timer_is_expired(stw_timer_t *timer);
+
+#endif

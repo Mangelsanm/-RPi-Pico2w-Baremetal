@@ -16,7 +16,7 @@ int main()
     scheduler_init();
 
     scheduler_add_task(task_blink, 500);
-    scheduler_add_task(task_blink2, 250);
+    scheduler_add_task(task_blink2, 100);
     scheduler_add_task(task_scheduler_log, 1000);
     scheduler_add_task(task_button_monitor, 10);
     scheduler_add_task(task_app_control, 10);

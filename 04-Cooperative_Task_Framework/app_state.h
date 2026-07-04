@@ -1,6 +1,8 @@
 #include <stdint.h>
+#include "soft_timer.h"
 
 extern uint8_t state_changed_g;
+extern stw_timer_t p_diagnostic_timer;
 
 typedef enum
 {

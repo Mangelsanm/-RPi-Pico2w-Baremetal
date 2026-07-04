@@ -5,6 +5,7 @@
 #include "scheduler.h"
 #include <stdio.h>
 #include "app_state.h"
+#include "soft_timer.h"
 
 static uint8_t button_raw_state;
 static uint8_t button_last_raw_state;
@@ -52,7 +53,7 @@ void task_blink()
 
 void task_blink2()
 { 
-    if(p_app_state == APP_STATE_RUNNING)
+    if(p_app_state == APP_STATE_DIAGNOSTIC)
     {
         SIO->GPIO_OUT ^= (1 << 2); // Toggle GPIO2
     }
@@ -122,6 +123,15 @@ void task_app_control(void)
     {
         button_pressed_event = 0u; // Reset the event flag
         app_next_state(&p_app_state); // Transition to the next state
+    }
+    
+    if(p_app_state == APP_STATE_DIAGNOSTIC)
+    {
+        if(sw_timer_is_expired(&p_diagnostic_timer))
+        {
+            p_app_state = APP_STATE_IDLE; // Transition back to IDLE state
+            state_changed_g = 1u; // Indicate that the state has changed
+        }
     }
 }
 

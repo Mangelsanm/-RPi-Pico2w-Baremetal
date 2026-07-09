@@ -1,6 +1,8 @@
 #include <stdint.h>
+#include "soft_timer.h"
 
 extern uint8_t state_changed_g;
+extern stw_timer_t p_diagnostic_timer;
 
 typedef enum
 {
@@ -10,5 +12,5 @@ typedef enum
     APP_STATE_COUNT
 } app_state_t;
 
-void app_next_state(app_state_t *app_state_g);
+void app_next_state(app_state_t *p_app_state);
  

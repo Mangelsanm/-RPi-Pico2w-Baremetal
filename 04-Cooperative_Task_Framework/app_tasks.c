@@ -5,6 +5,7 @@
 #include "scheduler.h"
 #include <stdio.h>
 #include "app_state.h"
+#include "soft_timer.h"
 
 static uint8_t button_raw_state;
 static uint8_t button_last_raw_state;
@@ -13,7 +14,7 @@ static uint8_t button_counter;
 static uint8_t button_pressed_event;
 
 /* variables for the State Machine */
-static app_state_t app_state_g = APP_STATE_IDLE;
+static app_state_t p_app_state = APP_STATE_IDLE;
 
 void app_tasks_init(void)
 {
@@ -43,13 +44,19 @@ void app_tasks_init(void)
 }
 
 void task_blink()
-{ 
-    SIO->GPIO_OUT ^= (1 << 1); // Toggle GPIO1
+{
+    if(p_app_state == APP_STATE_IDLE)
+    {
+        SIO->GPIO_OUT ^= (1 << 1); // Toggle GPIO1
+    }
 }
 
 void task_blink2()
 { 
-    SIO->GPIO_OUT ^= (1 << 2); // Toggle GPIO2
+    if(p_app_state == APP_STATE_DIAGNOSTIC)
+    {
+        SIO->GPIO_OUT ^= (1 << 2); // Toggle GPIO2
+    }
 }
 
 void task_uart_log()
@@ -115,7 +122,15 @@ void task_app_control(void)
     if(button_pressed_event == 1u)
     {
         button_pressed_event = 0u; // Reset the event flag
-        app_next_state(&app_state_g); // Transition to the next state
+        app_next_state(&p_app_state); // Transition to the next state
+    }
+    
+    if(p_app_state == APP_STATE_DIAGNOSTIC)
+    {
+        if(sw_timer_is_expired(&p_diagnostic_timer))
+        {
+            app_next_state(&p_app_state); // Transition to the next state
+        }
     }
 }
 
@@ -125,7 +140,7 @@ void task_state_log(void)
     {
         state_changed_g = 0u; // Reset the state changed flag
 
-        switch(app_state_g)
+        switch(p_app_state)
         {
             case APP_STATE_IDLE:
                 uart_write_string("State: IDLE\r\n");

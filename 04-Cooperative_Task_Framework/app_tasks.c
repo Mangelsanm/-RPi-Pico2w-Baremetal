@@ -129,8 +129,7 @@ void task_app_control(void)
     {
         if(sw_timer_is_expired(&p_diagnostic_timer))
         {
-            p_app_state = APP_STATE_IDLE; // Transition back to IDLE state
-            state_changed_g = 1u; // Indicate that the state has changed
+            app_next_state(&p_app_state); // Transition to the next state
         }
     }
 }

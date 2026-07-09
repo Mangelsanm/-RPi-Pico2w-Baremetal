@@ -18,8 +18,8 @@ void app_next_state(app_state_t *p_app_state)
             break;
 
         case APP_STATE_RUNNING:
-            sw_timer_start(&p_diagnostic_timer, 3000u); // Start a 3-second timer for diagnostic state
             *p_app_state = APP_STATE_DIAGNOSTIC;
+            sw_timer_start(&p_diagnostic_timer, 3000u); // Start a 3-second timer for diagnostic state
             break;
 
         case APP_STATE_DIAGNOSTIC:

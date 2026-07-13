@@ -66,15 +66,18 @@ void task_uart_log()
 
 void task_scheduler_log(void)
 {
-    char buffer[256];
-    snprintf(buffer, sizeof(buffer),
-    "tick=%lu blink1=%lu blink2=%lu\n late1=%lu late2=%lu\r\n",
-    (unsigned long)timebase_get_ms(), 
-    (unsigned long)tasks[0].exec_count,
-    (unsigned long)tasks[1].exec_count,
-    (unsigned long)tasks[0].max_lateness,
-    (unsigned long)tasks[1].max_lateness);
-    uart_write_string(buffer);
+    if(p_app_state == APP_STATE_RUNNING)
+    {
+        char buffer[256];
+        snprintf(buffer, sizeof(buffer),
+        "tick=%lu blink1=%lu blink2=%lu\n late1=%lu late2=%lu\r\n",
+        (unsigned long)timebase_get_ms(), 
+        (unsigned long)tasks[0].exec_count,
+        (unsigned long)tasks[1].exec_count,
+        (unsigned long)tasks[0].max_lateness,
+        (unsigned long)tasks[1].max_lateness);
+        uart_write_string(buffer);
+    }
 }
 
 void task_button_monitor(void)
@@ -122,14 +125,26 @@ void task_app_control(void)
     if(button_pressed_event == 1u)
     {
         button_pressed_event = 0u; // Reset the event flag
-        app_next_state(&p_app_state); // Transition to the next state
+
+        if(p_app_state == APP_STATE_IDLE)
+        {
+            app_transition(&p_app_state, APP_STATE_RUNNING); // Transition to RUNNING state
+        }
+        else if(p_app_state == APP_STATE_RUNNING)
+        {
+            app_transition(&p_app_state, APP_STATE_DIAGNOSTIC);
+        }
+        else if(p_app_state == APP_STATE_DIAGNOSTIC)
+        {
+            app_transition(&p_app_state, APP_STATE_IDLE);
+        }
     }
     
     if(p_app_state == APP_STATE_DIAGNOSTIC)
     {
         if(sw_timer_is_expired(&p_diagnostic_timer))
         {
-            app_next_state(&p_app_state); // Transition to the next state
+            app_transition(&p_app_state, APP_STATE_IDLE); // Transition to the next state
         }
     }
 }

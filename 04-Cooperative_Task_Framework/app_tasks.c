@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "app_state.h"
 #include "soft_timer.h"
+#include "event.h"
 
 static uint8_t button_raw_state;
 static uint8_t button_last_raw_state;
@@ -105,6 +106,7 @@ void task_button_monitor(void)
             if(button_stable_state == 0u)
             {
                 button_pressed_event = 1u;
+                event_push(EVENT_BUTTON_PRESS);
             }
         }
     }

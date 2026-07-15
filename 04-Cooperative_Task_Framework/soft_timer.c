@@ -1,5 +1,6 @@
 #include "soft_timer.h"
 #include "timebase.h"
+#include "event.h"
 
 void sw_timer_start(stw_timer_t *timer, uint32_t timeout_ms)
 {
@@ -21,6 +22,7 @@ uint8_t sw_timer_is_expired(stw_timer_t *timer)
         if(time_reached_owner(now, timer->start_time_ms + timer->timeout_ms))
         {
             timer->running = 0;
+            event_push(EVENT_TIMER_EXPIRED);
             return 1; // Timer has expired
         }
     }

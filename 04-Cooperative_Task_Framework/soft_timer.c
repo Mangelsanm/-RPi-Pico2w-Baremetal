@@ -23,7 +23,6 @@ void sw_timer_is_expired(stw_timer_t *timer)
         {
             timer->running = 0;
             event_push(EVENT_TIMER_EXPIRED);
-            // return 1; // Timer has expired
         }
     }
 }

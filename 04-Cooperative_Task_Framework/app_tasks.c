@@ -105,16 +105,10 @@ void task_button_monitor(void)
             button_stable_state = button_raw_state;
             if(button_stable_state == 0u)
             {
-                // button_pressed_event = 1u;
                 event_push(EVENT_BUTTON_PRESS);
             }
         }
     }
-
-    // if(button_pressed_event == 1u)
-    // {
-    //     uart_write_string("button pressed\r\n");
-    // }
 
     button_last_raw_state = button_raw_state;
 }
@@ -148,6 +142,9 @@ void task_app_control(void)
             {
                 app_transition(&p_app_state, APP_STATE_IDLE); // Transition to the next state
             }
+            break;
+        case EVENT_NONE:
+        default:
             break;
     }    
 }

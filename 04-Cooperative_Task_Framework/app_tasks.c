@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "app_state.h"
 #include "soft_timer.h"
+#include "event.h"
 
 static uint8_t button_raw_state;
 static uint8_t button_last_raw_state;
@@ -104,15 +105,10 @@ void task_button_monitor(void)
             button_stable_state = button_raw_state;
             if(button_stable_state == 0u)
             {
-                button_pressed_event = 1u;
+                event_push(EVENT_BUTTON_PRESS);
             }
         }
     }
-
-    // if(button_pressed_event == 1u)
-    // {
-    //     uart_write_string("button pressed\r\n");
-    // }
 
     button_last_raw_state = button_raw_state;
 }
@@ -122,31 +118,35 @@ void task_button_monitor(void)
 ***************************/
 void task_app_control(void)
 {
-    if(button_pressed_event == 1u)
-    {
-        button_pressed_event = 0u; // Reset the event flag
+    sw_timer_is_expired(&p_diagnostic_timer); // Check if the diagnostic timer has expired
+    event_t event = event_pop();
 
-        if(p_app_state == APP_STATE_IDLE)
-        {
-            app_transition(&p_app_state, APP_STATE_RUNNING); // Transition to RUNNING state
-        }
-        else if(p_app_state == APP_STATE_RUNNING)
-        {
-            app_transition(&p_app_state, APP_STATE_DIAGNOSTIC);
-        }
-        else if(p_app_state == APP_STATE_DIAGNOSTIC)
-        {
-            app_transition(&p_app_state, APP_STATE_IDLE);
-        }
-    }
-    
-    if(p_app_state == APP_STATE_DIAGNOSTIC)
+    switch(event)
     {
-        if(sw_timer_is_expired(&p_diagnostic_timer))
-        {
-            app_transition(&p_app_state, APP_STATE_IDLE); // Transition to the next state
-        }
-    }
+        case EVENT_BUTTON_PRESS:
+            if(p_app_state == APP_STATE_IDLE)
+            {
+                app_transition(&p_app_state, APP_STATE_RUNNING); // Transition to RUNNING state
+            }
+            else if(p_app_state == APP_STATE_RUNNING)
+            {
+                app_transition(&p_app_state, APP_STATE_DIAGNOSTIC);
+            }
+            else if(p_app_state == APP_STATE_DIAGNOSTIC)
+            {
+                app_transition(&p_app_state, APP_STATE_IDLE);
+            }
+            break;
+        case EVENT_TIMER_EXPIRED:
+            if(p_app_state == APP_STATE_DIAGNOSTIC)
+            {
+                app_transition(&p_app_state, APP_STATE_IDLE); // Transition to the next state
+            }
+            break;
+        case EVENT_NONE:
+        default:
+            break;
+    }    
 }
 
 void task_state_log(void)

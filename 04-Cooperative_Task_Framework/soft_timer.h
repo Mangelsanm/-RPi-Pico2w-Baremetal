@@ -12,6 +12,6 @@ typedef struct
 
 void sw_timer_start(stw_timer_t *timer, uint32_t timeout_ms);
 void sw_timer_stop(stw_timer_t *timer);
-uint8_t sw_timer_is_expired(stw_timer_t *timer);
+void sw_timer_is_expired(stw_timer_t *timer);
 
 #endif

@@ -26,4 +26,5 @@ event_t event_pop(void)
         event = event_queue[event_tail];
         event_tail = next_tail;
     }
+    return event;
 }

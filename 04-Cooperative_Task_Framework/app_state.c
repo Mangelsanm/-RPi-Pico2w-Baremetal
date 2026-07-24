@@ -3,6 +3,10 @@
 #include "soft_timer.h"
 #include "uart.h"
 
+/* variables for the State Machine */
+static app_state_t state_table[APP_STATE_COUNT][EVENT_COUNT];
+app_state_t p_app_state = APP_STATE_IDLE;
+
 /* Set to 1 so the initial IDLE state is reported at startup */
 uint8_t state_changed_g = 1u;
 stw_timer_t p_diagnostic_timer = {0};
@@ -31,9 +35,9 @@ stw_timer_t p_diagnostic_timer = {0};
 //     state_changed_g = 1u;
 // }
 
-void app_transition(app_state_t *p_app_state, app_state_t new_state)
+void app_transition(app_state_t new_state)
 {
-    switch(*p_app_state)
+    switch(p_app_state)
     {
         case APP_STATE_IDLE:
             app_exit_idle();
@@ -49,9 +53,9 @@ void app_transition(app_state_t *p_app_state, app_state_t new_state)
             break;
     }
 
-    *p_app_state = new_state;
+    p_app_state = new_state;
 
-    switch(*p_app_state)
+    switch(p_app_state)
     {
         case APP_STATE_IDLE:
             app_enter_idle();
@@ -68,6 +72,16 @@ void app_transition(app_state_t *p_app_state, app_state_t new_state)
     }
 
     state_changed_g = 1u;
+}
+
+void app_fsm_handle_event(event_t event)
+{
+    app_state_t new_state = state_table[p_app_state][event];
+
+    if(new_state != p_app_state)
+    {
+        app_transition(new_state);
+    }
 }
 
 void app_enter_idle(void)
@@ -98,4 +112,12 @@ void app_exit_diagnostic(void)
 {
     uart_write_string("Exit DIAGNOSTIC\r\n");
     SIO->GPIO_OUT_CLR = (1u << 1) | (1u << 2);
+}
+
+void app_fsm_init(void)
+{
+    state_table[APP_STATE_IDLE][EVENT_BUTTON_PRESS] = APP_STATE_RUNNING;
+    state_table[APP_STATE_RUNNING][EVENT_BUTTON_PRESS] = APP_STATE_DIAGNOSTIC;
+    state_table[APP_STATE_DIAGNOSTIC][EVENT_BUTTON_PRESS] = APP_STATE_IDLE;
+    state_table[APP_STATE_DIAGNOSTIC][EVENT_TIMER_EXPIRED] = APP_STATE_IDLE;
 }

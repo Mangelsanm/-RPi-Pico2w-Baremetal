@@ -6,16 +6,12 @@
 #include <stdio.h>
 #include "app_state.h"
 #include "soft_timer.h"
-#include "event.h"
 
 static uint8_t button_raw_state;
 static uint8_t button_last_raw_state;
 static uint8_t button_stable_state;
 static uint8_t button_counter;
 static uint8_t button_pressed_event;
-
-/* variables for the State Machine */
-static app_state_t p_app_state = APP_STATE_IDLE;
 
 void app_tasks_init(void)
 {
@@ -121,32 +117,14 @@ void task_app_control(void)
     sw_timer_is_expired(&p_diagnostic_timer); // Check if the diagnostic timer has expired
     event_t event = event_pop();
 
-    switch(event)
+    if(event != EVENT_NONE)
     {
-        case EVENT_BUTTON_PRESS:
-            if(p_app_state == APP_STATE_IDLE)
-            {
-                app_transition(&p_app_state, APP_STATE_RUNNING); // Transition to RUNNING state
-            }
-            else if(p_app_state == APP_STATE_RUNNING)
-            {
-                app_transition(&p_app_state, APP_STATE_DIAGNOSTIC);
-            }
-            else if(p_app_state == APP_STATE_DIAGNOSTIC)
-            {
-                app_transition(&p_app_state, APP_STATE_IDLE);
-            }
-            break;
-        case EVENT_TIMER_EXPIRED:
-            if(p_app_state == APP_STATE_DIAGNOSTIC)
-            {
-                app_transition(&p_app_state, APP_STATE_IDLE); // Transition to the next state
-            }
-            break;
-        case EVENT_NONE:
-        default:
-            break;
-    }    
+        app_fsm_handle_event(event);
+    }
+    else
+    {
+        // No event to process, can perform other tasks or simply return
+    }
 }
 
 void task_state_log(void)

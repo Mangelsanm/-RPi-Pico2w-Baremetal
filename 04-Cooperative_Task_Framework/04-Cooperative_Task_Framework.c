@@ -5,12 +5,14 @@
 #include "scheduler.h"
 #include "app_tasks.h"
 #include "uart.h"
+#include "app_state.h"
 
 
 int main()
 {
     stdio_init_all();
     app_tasks_init();
+    app_fsm_init();
     uart_init_own();
     timebase_init();
     scheduler_init();

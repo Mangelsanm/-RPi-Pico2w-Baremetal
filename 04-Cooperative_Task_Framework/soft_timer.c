@@ -22,7 +22,7 @@ void sw_timer_is_expired(stw_timer_t *timer)
         if(time_reached_owner(now, timer->start_time_ms + timer->timeout_ms))
         {
             timer->running = 0;
-            event_push(EVENT_TIMER_EXPIRED);
+            event_push(EVENT_TIMER_EXPIRED, HIGH);
         }
     }
 }

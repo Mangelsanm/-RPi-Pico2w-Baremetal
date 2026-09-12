@@ -9,5 +9,17 @@ typedef enum
     EVENT_COUNT,
 } event_t;
 
-void event_push(event_t event);
+typedef enum
+{
+    NORMAL = 0,
+    HIGH,
+} event_priority_t;
+
+void event_push(event_t event, event_priority_t priority);
 event_t event_pop(void);
+
+void push_high(event_t event);
+event_t pop_high(void);
+
+void push_normal(event_t event);
+event_t pop_normal(void);

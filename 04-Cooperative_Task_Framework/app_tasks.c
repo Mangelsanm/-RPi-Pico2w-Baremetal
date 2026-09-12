@@ -101,7 +101,7 @@ void task_button_monitor(void)
             button_stable_state = button_raw_state;
             if(button_stable_state == 0u)
             {
-                event_push(EVENT_BUTTON_PRESS);
+                event_push(EVENT_BUTTON_PRESS, NORMAL);
             }
         }
     }
